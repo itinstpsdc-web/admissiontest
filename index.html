@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PSDC Entry Test</title>
+<style>
+:root{--ink:#1b1740;--bg:#f2f1ff;--line:#e0def5;--p:#6d4aff;--p2:#ff4fa3;--ok:#0b9f6e;--bad:#e0445a;--mut:#5f5b82}
+*{box-sizing:border-box}
+html.nc,html.nc *{cursor:none!important}
+body{margin:0;color:var(--ink);font-family:"Segoe UI",Roboto,Arial,sans-serif;min-height:100vh;display:flex;flex-direction:column;background:linear-gradient(135deg,#eef0ff,#fdeefa 55%,#e6fbff);position:relative;overflow-x:hidden}
+body:before,body:after{content:"";position:fixed;width:46vw;height:46vw;border-radius:50%;filter:blur(90px);opacity:.35;z-index:-1;animation:fl 14s ease-in-out infinite alternate}
+body:before{background:#7c5cff;top:-14vw;left:-10vw}
+body:after{background:#ff7ac0;bottom:-16vw;right:-10vw;animation-delay:-6s}
+@keyframes fl{to{transform:translate(6vw,5vw) scale(1.15)}}
+h1,h2,h3{margin:0;font-family:Georgia,"Palatino Linotype",serif}
+.hidden{display:none!important}
+header{background:linear-gradient(100deg,#1b1740,#4b2fd1 55%,#c2328a);color:#fff;padding:26px 90px 22px;text-align:center;position:relative;box-shadow:0 8px 30px rgba(75,47,209,.3)}
+header h1{font-size:clamp(22px,3.4vw,40px);font-weight:800;letter-spacing:.6px;line-height:1.25}
+header p{margin:8px 0 0;font-size:16px;opacity:.85;letter-spacing:.4px}
+#adminBtn{position:absolute;right:22px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.4);padding:9px 16px;border-radius:999px;font:600 14px inherit;font-family:inherit;cursor:pointer;backdrop-filter:blur(6px)}
+#adminBtn:hover{background:rgba(255,255,255,.3)}
+main{flex:1;display:flex;justify-content:center;padding:30px 16px}
+footer{text-align:center;padding:14px;font-size:14px;color:var(--mut)}
+footer b{color:var(--ink)}
+.card{background:rgba(255,255,255,.92);border:1px solid var(--line);border-radius:18px;padding:32px;box-shadow:0 10px 34px rgba(60,40,160,.1)}
+.btn{font-family:inherit;font-weight:600;font-size:16px;border:0;border-radius:12px;padding:13px 26px;cursor:pointer;background:linear-gradient(100deg,var(--p),#9a4dff);color:#fff;box-shadow:0 6px 16px rgba(109,74,255,.35);transition:.15s}
+.btn:hover{transform:translateY(-2px);filter:brightness(1.08)}
+.btn.ghost{background:#fff;color:var(--ink);border:1.5px solid var(--ink);box-shadow:none}
+.btn.red{background:linear-gradient(100deg,#e0445a,#ff7a59);box-shadow:0 6px 16px rgba(224,68,90,.3)}
+.btn.grn{background:linear-gradient(100deg,#0b9f6e,#27c28a);box-shadow:0 6px 16px rgba(11,159,110,.3)}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.btn.big{width:100%;margin-top:24px;padding:16px;font-size:18px}
+.wrap{width:100%;max-width:980px}
+.ttl{text-align:center;font-size:32px;margin-bottom:8px}
+.sub{text-align:center;color:var(--mut);margin:0 0 28px;font-size:16px}
+.courses{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.cc{background:#fff;border:2px solid var(--line);border-radius:18px;padding:30px 18px;text-align:center;cursor:pointer;transition:.2s}
+.cc:hover{transform:translateY(-6px);box-shadow:0 14px 30px rgba(109,74,255,.2);border-color:var(--p)}
+.cc.sel{border-color:var(--p);background:linear-gradient(160deg,#f3efff,#fff0f8);box-shadow:0 14px 30px rgba(109,74,255,.25)}
+.cc .ic{font-size:50px;margin-bottom:10px}
+.cc h3{font-size:22px;margin-bottom:6px}.cc span{color:var(--mut);font-size:14px}
+.home-act{text-align:center;margin-top:28px}
+#reg .card{max-width:580px;margin:0 auto}
+.chip{display:inline-block;background:linear-gradient(100deg,var(--p),var(--p2));color:#fff;border-radius:999px;padding:6px 18px;font-weight:600;font-size:15px;margin-bottom:10px}
+label{display:block;font-weight:700;font-size:20px;margin:20px 0 8px}
+input[type=text],input[type=password],select{width:100%;font-size:22px;padding:15px 16px;border:2px solid var(--ink);border-radius:12px;outline:none;font-family:inherit;background:#fff}
+input:focus,select:focus{border-color:var(--p);box-shadow:0 0 0 4px #e7e1ff}
+.err{color:var(--bad);font-size:14px;margin-top:10px;min-height:18px}
+.rules{margin:18px 0 0;padding:14px 18px 14px 36px;background:#f6f4ff;border-radius:12px;font-size:14.5px;color:var(--mut);line-height:1.75}
+/* test */
+#test{flex-direction:column;gap:14px}
+.bar{display:flex;justify-content:space-between;align-items:center;gap:16px;background:rgba(255,255,255,.92);border:1px solid var(--line);border-radius:16px;padding:14px 22px}
+.who b{font-size:18px}.who span{display:block;color:var(--mut);font-size:13px}
+.timer{font:700 36px Consolas,"Courier New",monospace}
+.timer.low{color:var(--bad);animation:bl 1s infinite}
+@keyframes bl{50%{opacity:.5}}
+.prog{height:7px;background:var(--line);border-radius:5px;overflow:hidden}
+.prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--p),var(--p2))}
+.grid{display:grid;grid-template-columns:1fr 250px;gap:16px}
+.qn{color:var(--p);font-weight:700;margin-bottom:10px}
+.qt{font:600 24px/1.4 Georgia,serif;margin-bottom:22px}
+.opt{display:flex;gap:14px;align-items:center;padding:14px 16px;border:2px solid var(--line);border-radius:12px;margin-bottom:10px;cursor:pointer;font-size:18px;background:#fff;transition:.15s}
+.opt:hover{border-color:var(--p);transform:translateX(4px)}
+.opt.sel{border-color:var(--p);background:#f1edff}
+.opt em{font-style:normal;font-weight:700;width:32px;height:32px;border-radius:50%;background:#efecff;display:grid;place-items:center;flex:none;font-size:14px}
+.opt.sel em{background:var(--p);color:#fff}
+.nav{display:flex;justify-content:space-between;margin-top:20px;gap:10px;flex-wrap:wrap}
+.hint{font-size:13px;color:var(--mut);margin-top:10px}
+.side h3{font-size:17px;margin-bottom:12px}
+.pal{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}
+.pal button{aspect-ratio:1;border:1.5px solid var(--line);background:#fff;border-radius:9px;font-weight:600;cursor:pointer;font-family:inherit}
+.pal button.ans{background:var(--ok);border-color:var(--ok);color:#fff}
+.pal button.cur{outline:3px solid var(--p);outline-offset:1px}
+.legend{font-size:13px;color:var(--mut);margin-top:14px;line-height:1.6}
+/* modal */
+.modal{position:fixed;inset:0;background:rgba(27,23,64,.72);display:grid;place-items:center;z-index:50;padding:16px;backdrop-filter:blur(4px)}
+.modal .box{background:#fff;border-radius:20px;padding:34px;max-width:460px;width:100%;text-align:center}
+.modal h2{margin-bottom:10px}.modal p{color:var(--mut);line-height:1.5;margin:0 0 22px}
+.modal .row{display:flex;gap:10px;justify-content:center}
+/* admin */
+#admin{position:fixed;inset:0;background:rgba(27,23,64,.75);z-index:55;overflow:auto;padding:24px;display:flex;justify-content:center;align-items:flex-start}
+#admin .card{max-width:760px;width:100%}
+#admin h2{font-size:26px;text-align:center;margin-bottom:6px}
+#admin ol{line-height:1.8;color:var(--mut);font-size:14.5px;background:#f6f4ff;border-radius:12px;padding:14px 18px 14px 36px}
+#admin label{font-size:16px;margin:16px 0 6px}
+#admin select,#admin input[type=password]{font-size:17px;padding:11px}
+#admin input[type=file]{font-size:15px;width:100%;padding:12px;border:2px dashed var(--p);border-radius:12px;background:#faf9ff}
+.arow{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+#amsg{margin-top:14px;font-size:14.5px;line-height:1.6}
+#amsg .e{color:var(--bad)}#amsg .g{color:var(--ok);font-weight:700}
+table.t{border-collapse:collapse;font-size:13px;margin-top:8px;width:100%}
+table.t td,table.t th{border:1px solid #cfcbe9;padding:5px 8px}
+/* report */
+#report{position:fixed;inset:0;background:#cdc9ee;overflow:auto;z-index:60;padding:20px}
+.tools{max-width:840px;margin:0 auto 14px;display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
+.sheet{max-width:840px;margin:0 auto;background:#fff;padding:40px 46px;border-radius:6px;color:#111}
+.rh{text-align:center;border-bottom:3px double var(--ink);padding-bottom:14px;margin-bottom:18px}
+.rh h1{font-size:25px;letter-spacing:.5px;line-height:1.3}.rh p{margin:6px 0 0;font-size:14px;color:#444}
+.sheet h2{font-size:19px;text-align:center;margin:0 0 14px}
+.info{width:100%;border-collapse:collapse;margin-bottom:16px}
+.info td{border:1px solid #bbb;padding:7px 11px;font-size:14px}
+.info td:nth-child(odd){background:#f1f0fb;font-weight:700;width:19%}
+.score{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+.score div{border:1px solid #bbb;text-align:center;padding:12px 6px;border-radius:8px}
+.score b{display:block;font:700 26px Georgia,serif}.score span{font-size:12px;color:#555}
+.res{font-weight:700;text-align:center;padding:10px;border-radius:8px;margin-bottom:16px;font-size:18px}
+.res.p{background:#e3f6ee;color:var(--ok)}.res.f{background:#fde8eb;color:var(--bad)}
+.charts{display:grid;grid-template-columns:200px 1fr;gap:20px;align-items:center;border:1px solid #ddd;border-radius:8px;padding:14px;margin-bottom:6px}
+.sign{display:flex;justify-content:space-between;margin-top:44px;font-size:13px}
+.sign div{border-top:1px solid #333;padding-top:6px;width:200px;text-align:center}
+.rf{text-align:center;font-size:12px;color:#666;margin-top:22px}
+/* cursor + ripple */
+#cur{position:fixed;left:0;top:0;width:30px;height:30px;pointer-events:none;z-index:99999;display:none;animation:hue 3.5s linear infinite;filter:drop-shadow(0 2px 3px rgba(0,0,0,.35))}
+@keyframes hue{to{filter:hue-rotate(360deg) drop-shadow(0 2px 3px rgba(0,0,0,.35))}}
+.rip{position:fixed;width:20px;height:20px;border-radius:50%;pointer-events:none;z-index:99998;transform:translate(-50%,-50%) scale(0);animation:rp .7s ease-out forwards}
+@keyframes rp{to{transform:translate(-50%,-50%) scale(7);opacity:0}}
+@media(max-width:820px){.grid,.courses,.charts{grid-template-columns:1fr}header{padding:22px 16px}#adminBtn{position:static;transform:none;margin-top:12px}}
+@media print{
+ body>*:not(#report){display:none!important}
+ #report{position:static;background:#fff;padding:0;overflow:visible}
+ .tools,#cur,.rip{display:none!important}.sheet{padding:0;max-width:none}
+ @page{margin:12mm}*{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>PAFWA SKILLS DEVELOPMENT CENTRE, NRK (PSDC)</h1>
+  <p>Online Entry Test</p>
+  <button id="adminBtn">Admin</button>
+</header>
+
+<main id="home"><div class="wrap">
+  <h2 class="ttl">Select Your Course</h2>
+  <p class="sub">Click on the course you want to take the test for, then press Next.</p>
+  <div class="courses" id="courses"></div>
+  <div class="home-act"><button class="btn big" style="max-width:340px" id="homeNext" disabled>Next</button></div>
+</div></main>
+
+<main id="reg" class="hidden"><div class="wrap"><div class="card">
+  <div style="text-align:center"><span class="chip" id="rcourse"></span></div>
+  <h2 class="ttl">Student Details</h2>
+  <p class="sub" style="margin-bottom:6px">Enter your details before starting the test.</p>
+  <label for="sn">Student Name</label>
+  <input type="text" id="sn" autocomplete="off" placeholder="Enter your full name">
+  <label for="fn">Father Name</label>
+  <input type="text" id="fn" autocomplete="off" placeholder="Enter your father's full name">
+  <div class="err" id="err"></div>
+  <ul class="rules">
+    <li>Total time is 30 minutes for the whole paper, not per question.</li>
+    <li>Each question carries 1 mark. There is no negative marking.</li>
+    <li>You can move to any question using Next, Previous or the question numbers.</li>
+    <li>The End Paper button becomes active when all questions are answered, or after 15 minutes.</li>
+    <li>The test ends automatically when the time is over.</li>
+  </ul>
+  <div class="arow" style="margin-top:22px"><button class="btn ghost" id="regBack">Back</button><button class="btn" style="flex:1;font-size:18px" id="go">Start Test</button></div>
+</div></div></main>
+
+<main id="test" class="hidden"><div class="wrap" style="display:flex;flex-direction:column;gap:14px">
+  <div class="bar">
+    <div class="who"><b id="wn"></b><span id="wf"></span><span id="wc"></span></div>
+    <div style="text-align:right"><div class="timer" id="tm">30:00</div><span style="font-size:12px;color:var(--mut)">Time remaining</span></div>
+  </div>
+  <div class="prog"><i id="pg"></i></div>
+  <div class="grid">
+    <div class="card">
+      <div class="qn" id="qn"></div><div class="qt" id="qt"></div><div id="opts"></div>
+      <div class="nav"><button class="btn ghost" id="prev">Previous</button><button class="btn red" id="end" disabled>End Paper</button><button class="btn" id="next">Next</button></div>
+      <div class="hint" id="endhint"></div>
+    </div>
+    <div class="card side"><h3>Questions</h3><div class="pal" id="pal"></div><div class="legend">Green: answered<br><span id="cnt"></span></div></div>
+  </div>
+</div></main>
+
+<div class="modal hidden" id="confirm"><div class="box"><h2>End paper?</h2><p id="cmsg"></p>
+  <div class="row"><button class="btn ghost" id="cno">Back to test</button><button class="btn red" id="cyes">Yes, end paper</button></div></div></div>
+
+<div class="modal hidden" id="done"><div class="box"><h2>Test Completed</h2>
+  <p>Your test is complete. Press the button below to see your result.</p>
+  <button class="btn grn big" style="margin-top:0" id="vr">View Result</button></div></div>
+
+<div id="admin" class="hidden"><div class="card">
+  <h2>Admin Panel</h2>
+  <div id="lock">
+    <label for="ap">Admin Password</label><input type="password" id="ap" placeholder="Enter admin password">
+    <div class="err" id="aerr"></div>
+    <div class="arow"><button class="btn" id="alogin">Login</button><button class="btn ghost" id="aclose1">Close</button></div>
+  </div>
+  <div id="panel" class="hidden">
+    <h3 style="margin:10px 0 8px;font-size:18px">Guidelines for uploading MCQs</h3>
+    <ol>
+      <li>Click "Download Template" and open it in Microsoft Excel.</li>
+      <li>Row 1 is the heading row. Keep it as it is. Start your MCQs from row 2.</li>
+      <li>Use exactly 6 columns: A = Question, B = Option A, C = Option B, D = Option C, E = Option D, F = Correct Answer.</li>
+      <li>Correct Answer must be one letter only: A, B, C or D.</li>
+      <li>Every question needs all 4 options. Do not leave any cell empty and do not leave blank rows between questions.</li>
+      <li>Save the file as .xlsx (Excel Workbook) or .csv. Only the first sheet is read.</li>
+      <li>Select the course below, choose the file and press Check File. If there is no error, press Save Questions.</li>
+      <li>Saved questions replace the old questions of that course. Use 25 questions for a full test. Each question is 1 mark.</li>
+    </ol>
+    <table class="t"><tr><th>Question</th><th>Option A</th><th>Option B</th><th>Option C</th><th>Option D</th><th>Correct Answer</th></tr><tr><td>What does CPU stand for?</td><td>Central Process Unit</td><td>Central Processing Unit</td><td>Computer Personal Unit</td><td>Control Program Unit</td><td>B</td></tr></table>
+    <label for="acourse">Course</label><select id="acourse"></select>
+    <div style="font-size:14px;color:var(--mut);margin-top:6px" id="acount"></div>
+    <label for="afile">Excel (.xlsx) or CSV file</label><input type="file" id="afile" accept=".xlsx,.csv">
+    <div class="arow">
+      <button class="btn" id="acheck">Check File</button>
+      <button class="btn grn" id="asave" disabled>Save Questions</button>
+      <button class="btn ghost" id="atpl">Download Template</button>
+      <button class="btn ghost" id="areset">Restore Default</button>
+      <button class="btn ghost" id="aclose2">Close</button>
+    </div>
+    <div id="amsg"></div>
+  </div>
+</div></div>
+
+<div id="report" class="hidden">
+  <div class="tools"><button class="btn" onclick="window.print()">Print / Save as PDF</button><button class="btn grn" id="newStu">Start Test - New Student</button></div>
+  <div class="sheet" id="sheet"></div>
+</div>
+
+<footer>Developed by <b>IT Instructor Hidayat Khan</b></footer>
+
+<div id="cur"><svg viewBox="0 0 30 30" width="30" height="30"><defs><linearGradient id="cg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff3d71"/><stop offset=".5" stop-color="#ffb300"/><stop offset="1" stop-color="#3d7bff"/></linearGradient></defs><path d="M3 2 L3 24 L9 18.5 L13.5 28 L18 26 L13.6 16.8 L22 16.5 Z" fill="url(#cg)" stroke="#fff" stroke-width="1.8" stroke-linejoin="round"/></svg></div>
+
+<script>
+const $=id=>document.getElementById(id);
+const ADMIN_PASS="psdc@admin";
+const TOTAL=30*60;
+const COURSES=[
+ {id:"co",name:"Computer Operator",ic:"💻"},
+ {id:"dm",name:"Digital Marketing",ic:"📈"},
+ {id:"gd",name:"Graphics Designing",ic:"🎨"}];
+const RAW={
+co:`What does CPU stand for?|Central Process Unit|Central Processing Unit|Computer Personal Unit|Control Program Unit|B
+Which of these is an input device?|Monitor|Printer|Keyboard|Speaker|C
+Which of these is an output device?|Mouse|Scanner|Microphone|Monitor|D
+Which is the main circuit board of a computer?|Motherboard|Hard disk|RAM stick|Power supply|A
+RAM is a type of ______ memory.|Permanent|Volatile|Optical|Read-only|B
+Which of the following is an operating system?|Google Chrome|Microsoft Word|Windows 11|Intel Core|C
+1 Byte equals how many bits?|4|16|10|8|D
+Which shortcut key copies selected text?|Ctrl + C|Ctrl + V|Ctrl + X|Ctrl + Z|A
+Which shortcut key is used to paste?|Ctrl + P|Ctrl + V|Ctrl + S|Ctrl + A|B
+Which program is used to browse the internet?|Notepad|Calculator|Web browser|Paint|C
+What does www stand for?|World Wide Wire|Web Wide World|Wide World Web|World Wide Web|D
+Which file extension belongs to a Word document?|.docx|.xlsx|.pptx|.jpg|A
+Which software is used to create spreadsheets?|MS PowerPoint|MS Excel|MS Access|Notepad|B
+Which software is used to create presentations?|MS Word|MS Excel|MS PowerPoint|Windows Media Player|C
+Which of these is a storage device?|Keyboard|Mouse|Monitor|USB flash drive|D
+What is called the brain of the computer?|CPU|Monitor|Keyboard|Mouse|A
+Which key deletes the character to the left of the cursor?|Delete|Backspace|Enter|Shift|B
+Which software protects a computer from viruses?|Photoshop|VLC Player|Antivirus|WinRAR|C
+What does USB stand for?|Universal System Bus|United Serial Board|Universal Service Block|Universal Serial Bus|D
+Which symbol is required in every email address?|@|#|$|%|A
+Which unit is used to measure storage size?|Hertz|Gigabyte|Pixel|Watt|B
+Which of the following is a programming language?|HTTP|Windows|Python|Google|C
+Which of these is a search engine?|Facebook|WhatsApp|Excel|Google|D
+What is the full form of PDF?|Portable Document Format|Printed Data File|Personal Disk Folder|Public Document Form|A
+Which shortcut key saves a file?|Ctrl + N|Ctrl + S|Ctrl + O|Ctrl + W|B`,
+dm:`What does SEO stand for?|Search Engine Optimization|Social Engagement Overview|Site Efficiency Output|Search Email Operation|A
+PPC stands for?|Post Per Comment|Pay Per Click|Page Per Customer|Paid Public Content|B
+Which is Google's advertising service?|Google Maps|Google Drive|Google Ads|Google Docs|C
+CTR stands for?|Cost To Reach|Click Through Rate|Customer Total Revenue|Content Traffic Ratio|B
+A keyword is?|A password|A website colour|A type of virus|A word or phrase people search for|D
+Which of these is a social media platform?|Excel|Notepad|Facebook|WinZip|C
+CPC means?|Content Per Customer|Click Per Content|Cost Per Click|Cost Per Comment|C
+Email marketing is used to?|Edit photos|Send promotional messages to subscribers|Repair computers|Design logos|B
+Which tool shows website traffic?|Photoshop|Paint|Google Analytics|Calculator|C
+A backlink is?|A broken page|A link from another website to yours|A deleted post|A paid advert|B
+What is a call to action (CTA)?|A phone call|A website error|A prompt telling users what to do next|A hashtag|C
+Which is an example of content marketing?|Hacking websites|Printing passwords|Deleting data|Writing useful blogs and videos to attract customers|D
+Hashtags (#) are mainly used to?|Group posts by topic|Delete posts|Change passwords|Block users|A
+ROI stands for?|Rate Of Internet|Return On Investment|Range Of Impressions|Reach Of Interest|B
+Impressions mean?|Number of sales|Number of emails|Number of times content is displayed|Number of followers lost|C
+Organic reach means?|Paid ad views|Free views without paid promotion|Bought followers|Email spam|B
+SMM stands for?|Small Market Management|Site Map Maker|Search Media Method|Social Media Marketing|D
+Which Meta tool is used to run Facebook and Instagram ads?|Task Manager|File Manager|Ads Manager|Disk Manager|C
+A landing page is?|The page a visitor reaches after clicking an ad or link|A page for deleting files|A printer page|A desktop wallpaper|A
+Bounce rate shows?|Total sales|Number of ads|Email size|Visitors who leave after viewing only one page|D
+Which platform is best known for professional networking?|TikTok|LinkedIn|Snapchat|Pinterest|B
+A meta description appears?|Under the page title in search results|On the keyboard|On the printer|On the desktop|A
+Which is a free tool for keyword and trend research?|MS Paint|VLC|Google Trends|WinRAR|C
+A/B testing means?|Backing up data|Sorting the alphabet|Testing two keyboards|Comparing two versions to see which performs better|D
+Which is a traditional (non-digital) marketing channel?|Email|Roadside billboard|Social media|Search ads|B`,
+gd:`Which software is mainly used for photo editing?|Adobe Photoshop|MS Excel|Notepad|WinRAR|A
+Adobe Illustrator mainly works with?|Raster images|Vector graphics|Spreadsheets|Audio|B
+RGB colour mode is used for?|Offset printing|Embossing|Screens and digital displays|Book binding|C
+CMYK colour mode is mainly used for?|Web animation|Mobile apps|Video games|Printing|D
+Which file format supports a transparent background?|JPG|PNG|BMP|DOC|B
+DPI stands for?|Dots Per Inch|Data Per Image|Display Pixel Index|Digital Print Item|A
+Standard resolution for print is?|72 dpi|10 dpi|300 dpi|1000 dpi|C
+A pixel is?|A type of font|A printer|A file folder|The smallest unit of a digital image|D
+Which is a vector file format?|JPG|SVG|PNG|GIF|B
+Which shortcut is used to undo?|Ctrl + Y|Ctrl + P|Ctrl + Z|Ctrl + Q|C
+Typography is the art of?|Programming|Cooking|Typing speed testing|Arranging and styling type|D
+Primary colours in traditional painting are?|Red, Yellow, Blue|Black, White, Grey|Pink, Green, Orange|Brown, Purple, Cyan|A
+A logo is?|A spreadsheet|A symbol or mark that identifies a brand|A virus|A keyboard key|B
+Which Photoshop tool selects a rectangular area?|Healing Brush|Eraser Tool|Rectangular Marquee Tool|Gradient Tool|C
+Layers in Photoshop allow you to?|Format a hard disk|Send emails|Print only|Edit parts of a design separately|D
+Kerning is?|Image size|Spacing between two specific letters|Page colour|File size|B
+Canva is?|A virus|A browser|A printer|An online graphic design tool|D
+Which pair are complementary colours?|Blue and Orange|Blue and Navy|Red and Orange|Green and Teal|A
+Resolution refers to?|Colour of a page|Amount of detail in an image|Size of a keyboard|Speed of internet|B
+Which format keeps Photoshop layers?|JPG|MP3|PSD|TXT|C
+A banner is?|A large graphic used to advertise or announce|A keyboard|A cable|A folder|A
+Which font style has no small strokes at the letter ends?|Serif|Sans-serif|Old English|Gothic block|B
+White space in design is?|A mistake|White paint|Empty space that gives balance and clarity|A file type|C
+The Crop tool is used to?|Change font|Print|Delete a layer|Trim unwanted areas of an image|D
+Standard A4 paper size is?|210 x 297 mm|297 x 420 mm|148 x 210 mm|100 x 150 mm|A`};
+function parseRaw(t){return t.trim().split("\n").map(l=>{const p=l.split("|");return{q:p[0],o:p.slice(1,5),a:"ABCD".indexOf(p[5])}})}
+function bank(id){
+  try{const s=localStorage.getItem("psdc_q_"+id);if(s){const j=JSON.parse(s);if(j&&j.length)return j}}catch(e){}
+  return parseRaw(RAW[id]);
+}
+const st={course:null,Q:[],name:"",father:"",cur:0,ans:[],left:TOTAL,iv:null,over:false,start:null,end:null};
+function show(id){["home","reg","test"].forEach(x=>$(x).classList.toggle("hidden",x!==id));if(id==="test")$("test").style.display="flex"}
+/* home */
+COURSES.forEach(c=>{const d=document.createElement("div");d.className="cc";d.innerHTML=`<div class="ic">${c.ic}</div><h3>${c.name}</h3><span>${bank(c.id).length} MCQs &bull; 30 minutes</span>`;
+  d.onclick=()=>{st.course=c;[...$("courses").children].forEach(x=>x.classList.remove("sel"));d.classList.add("sel");$("homeNext").disabled=false};$("courses").appendChild(d)});
+function refreshCounts(){[...$("courses").children].forEach((d,i)=>d.querySelector("span").innerHTML=bank(COURSES[i].id).length+" MCQs &bull; 30 minutes")}
+$("homeNext").onclick=()=>{$("rcourse").textContent=st.course.name;$("err").textContent="";show("reg");$("sn").focus()};
+$("regBack").onclick=()=>show("home");
+$("sn").addEventListener("keydown",e=>{if(e.key==="Enter")$("fn").focus()});
+$("fn").addEventListener("keydown",e=>{if(e.key==="Enter")$("go").click()});
+/* test */
+function pad(n){return String(n).padStart(2,"0")}
+$("go").onclick=()=>{
+  const n=$("sn").value.trim(),f=$("fn").value.trim();
+  if(!n||!f){$("err").textContent="Please enter both Student Name and Father Name.";return}
+  Object.assign(st,{name:n,father:f,cur:0,over:false,Q:bank(st.course.id)});
+  st.ans=Array(st.Q.length).fill(-1);st.start=new Date();
+  $("wn").textContent=n;$("wf").textContent="S/O "+f;$("wc").textContent="Course: "+st.course.name;
+  $("pal").innerHTML="";st.Q.forEach((_,i)=>{const b=document.createElement("button");b.textContent=i+1;b.onclick=()=>{st.cur=i;render()};$("pal").appendChild(b)});
+  show("test");render();
+  const t0=Date.now();clearInterval(st.iv);
+  st.iv=setInterval(()=>{st.left=Math.max(0,TOTAL-Math.floor((Date.now()-t0)/1000));tick();if(st.left<=0)finish()},250);
+  window.onbeforeunload=e=>{if(!st.over){e.preventDefault();e.returnValue=""}};
+};
+function tick(){
+  $("tm").textContent=pad(Math.floor(st.left/60))+":"+pad(st.left%60);
+  $("tm").classList.toggle("low",st.left<=300);
+  $("pg").style.width=((TOTAL-st.left)/TOTAL*100)+"%";
+  const all=st.ans.every(a=>a>=0),half=st.left<=TOTAL/2;
+  $("end").disabled=!(all||half);
+  $("endhint").textContent=(all||half)?"You can end the paper now.":"End Paper activates when all questions are answered, or after 15 minutes.";
+}
+function render(){
+  const q=st.Q[st.cur],N=st.Q.length;
+  $("qn").textContent="Question "+(st.cur+1)+" of "+N;$("qt").textContent=q.q;$("opts").innerHTML="";
+  q.o.forEach((t,i)=>{const d=document.createElement("div");d.className="opt"+(st.ans[st.cur]===i?" sel":"");d.innerHTML="<em>"+"ABCD"[i]+"</em><span></span>";d.lastChild.textContent=t;d.onclick=()=>{st.ans[st.cur]=i;render()};$("opts").appendChild(d)});
+  $("prev").disabled=st.cur===0;$("next").disabled=st.cur===N-1;
+  [...$("pal").children].forEach((b,i)=>b.className=(st.ans[i]>=0?"ans ":"")+(i===st.cur?"cur":""));
+  $("cnt").textContent="Answered: "+st.ans.filter(a=>a>=0).length+" / "+N;tick();
+}
+$("prev").onclick=()=>{if(st.cur>0){st.cur--;render()}};
+$("next").onclick=()=>{if(st.cur<st.Q.length-1){st.cur++;render()}};
+$("end").onclick=()=>{const u=st.ans.filter(a=>a<0).length;$("cmsg").textContent=u?u+" question(s) are still unanswered. Do you want to end the paper?":"All questions are answered. Do you want to end the paper?";$("confirm").classList.remove("hidden")};
+$("cno").onclick=()=>$("confirm").classList.add("hidden");
+$("cyes").onclick=()=>{$("confirm").classList.add("hidden");finish()};
+function finish(){if(st.over)return;st.over=true;st.end=new Date();clearInterval(st.iv);window.onbeforeunload=null;$("confirm").classList.add("hidden");$("done").classList.remove("hidden")}
+/* report */
+const D=d=>d.toLocaleDateString("en-GB",{day:"2-digit",month:"long",year:"numeric"});
+const T=d=>d.toLocaleTimeString("en-US",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
+const esc=s=>String(s).replace(/[&<>]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[m]));
+$("vr").onclick=()=>{
+  const N=st.Q.length;let c=0;st.Q.forEach((q,i)=>{if(st.ans[i]===q.a)c++});
+  const att=st.ans.filter(a=>a>=0).length,w=att-c,u=N-att,pct=Math.round(c/N*1000)/10,pass=pct>=50;
+  const g=pct>=90?"A+":pct>=80?"A":pct>=70?"B":pct>=60?"C":pct>=50?"D":"F";
+  const used=Math.min(TOTAL,Math.round((st.end-st.start)/1000)),now=new Date();
+  const rid="PSDC-"+now.getFullYear()+pad(now.getMonth()+1)+pad(now.getDate())+"-"+pad(now.getHours())+pad(now.getMinutes())+pad(now.getSeconds());
+  const segs=[[c,"#0b9f6e"],[w,"#e0445a"],[u,"#9aa5b8"]],R=54,C=2*Math.PI*R;let off=0;
+  const arcs=segs.map(([v,col])=>{const l=v/N*C,s=`<circle cx="70" cy="70" r="${R}" fill="none" stroke="${col}" stroke-width="22" stroke-dasharray="${l} ${C-l}" stroke-dashoffset="${-off}" transform="rotate(-90 70 70)"/>`;off+=l;return s}).join("");
+  const bars=[["Correct",c,"#0b9f6e"],["Wrong",w,"#e0445a"],["Not attempted",u,"#9aa5b8"]].map(([l,v,col],i)=>`<text x="0" y="${24+i*38}" font-size="13" fill="#333">${l}</text><rect x="110" y="${9+i*38}" width="${Math.max(2,v/N*330)}" height="22" rx="4" fill="${col}"/><text x="${118+v/N*330}" y="${26+i*38}" font-size="13" font-weight="700" fill="#111">${v}</text>`).join("");
+  $("sheet").innerHTML=`
+  <div class="rh"><h1>PAFWA SKILLS DEVELOPMENT CENTRE, NRK (PSDC)</h1><p>Entry Test Result Report &mdash; ${esc(st.course.name)}</p></div>
+  <table class="info">
+   <tr><td>Student Name</td><td>${esc(st.name)}</td><td>Father Name</td><td>${esc(st.father)}</td></tr>
+   <tr><td>Course</td><td>${esc(st.course.name)}</td><td>Report No.</td><td>${rid}</td></tr>
+   <tr><td>Test Date</td><td>${D(st.start)}</td><td>Day</td><td>${st.start.toLocaleDateString("en-US",{weekday:"long"})}</td></tr>
+   <tr><td>Start Time</td><td>${T(st.start)}</td><td>End Time</td><td>${T(st.end)}</td></tr>
+   <tr><td>Time Allowed</td><td>30 minutes</td><td>Time Used</td><td>${pad(Math.floor(used/60))}:${pad(used%60)} (mm:ss)</td></tr>
+   <tr><td>Marks per Question</td><td>1</td><td>Negative Marking</td><td>None</td></tr>
+  </table>
+  <div class="score"><div><b>${N}</b><span>Total Marks</span></div><div><b>${c}</b><span>Obtained Marks</span></div><div><b>${pct}%</b><span>Percentage</span></div><div><b>${g}</b><span>Grade</span></div></div>
+  <div class="score"><div><b>${att}</b><span>Attempted</span></div><div><b>${c}</b><span>Correct</span></div><div><b>${w}</b><span>Wrong</span></div><div><b>${u}</b><span>Not Attempted</span></div></div>
+  <div class="res ${pass?"p":"f"}">Result: ${pass?"PASS":"FAIL"} &nbsp;(Obtained ${c} out of ${N} marks &bull; Passing percentage 50%)</div>
+  <div class="charts">
+   <svg viewBox="0 0 140 140" width="180" height="180">${arcs}<text x="70" y="68" text-anchor="middle" font-size="22" font-weight="700" fill="#111">${pct}%</text><text x="70" y="86" text-anchor="middle" font-size="11" fill="#555">Score</text></svg>
+   <svg viewBox="0 0 480 120" width="100%">${bars}</svg>
+  </div>
+  <div class="sign"><div>Student Signature</div><div>Instructor / Incharge</div></div>
+  <div class="rf">Report generated on ${D(now)} at ${T(now)} &bull; Computer generated report &bull; Developed by IT Instructor Hidayat Khan</div>`;
+  $("done").classList.add("hidden");$("report").classList.remove("hidden");
+};
+$("newStu").onclick=()=>{
+  $("report").classList.add("hidden");$("sn").value="";$("fn").value="";
+  st.course=null;$("homeNext").disabled=true;[...$("courses").children].forEach(x=>x.classList.remove("sel"));
+  refreshCounts();show("home");
+};
+/* admin */
+COURSES.forEach(c=>{const o=document.createElement("option");o.value=c.id;o.textContent=c.name;$("acourse").appendChild(o)});
+let pending=null;
+const acount=()=>$("acount").textContent="Current questions saved for this course: "+bank($("acourse").value).length;
+$("adminBtn").onclick=()=>{$("admin").classList.remove("hidden");$("lock").classList.remove("hidden");$("panel").classList.add("hidden");$("ap").value="";$("aerr").textContent=""};
+const aclose=()=>{$("admin").classList.add("hidden");pending=null;refreshCounts()};
+$("aclose1").onclick=aclose;$("aclose2").onclick=aclose;
+$("alogin").onclick=()=>{if($("ap").value===ADMIN_PASS){$("lock").classList.add("hidden");$("panel").classList.remove("hidden");acount()}else $("aerr").textContent="Incorrect password."};
+$("ap").addEventListener("keydown",e=>{if(e.key==="Enter")$("alogin").click()});
+$("acourse").onchange=()=>{pending=null;$("asave").disabled=true;$("amsg").innerHTML="";acount()};
+function csv(t){t=t.replace(/^\uFEFF/,"");const d=(t.split("\n")[0].match(/;/g)||[]).length>(t.split("\n")[0].match(/,/g)||[]).length?";":",";const rows=[];let r=[],f="",q=false;
+  for(let i=0;i<t.length;i++){const ch=t[i];if(q){if(ch==='"'){if(t[i+1]==='"'){f+='"';i++}else q=false}else f+=ch}else if(ch==='"')q=true;else if(ch===d){r.push(f);f=""}else if(ch==="\n"){r.push(f);rows.push(r);r=[];f=""}else if(ch!=="\r")f+=ch}
+  if(f||r.length){r.push(f);rows.push(r)}return rows}
+async function inflate(u8){const s=new Blob([u8]).stream().pipeThrough(new DecompressionStream("deflate-raw"));return new Uint8Array(await new Response(s).arrayBuffer())}
+async function unzip(buf){const dv=new DataView(buf),u=new Uint8Array(buf);let e=u.length-22;while(e>=0&&dv.getUint32(e,true)!==0x06054b50)e--;if(e<0)throw Error("Not a valid .xlsx file.");
+  const n=dv.getUint16(e+10,true);let p=dv.getUint32(e+16,true);const out={},td=new TextDecoder();
+  for(let i=0;i<n;i++){const m=dv.getUint16(p+10,true),cs=dv.getUint32(p+20,true),nl=dv.getUint16(p+28,true),el=dv.getUint16(p+30,true),cl=dv.getUint16(p+32,true),lo=dv.getUint32(p+42,true);
+    const name=td.decode(u.subarray(p+46,p+46+nl));p+=46+nl+el+cl;
+    if(!/^xl\/(sharedStrings|worksheets\/sheet\d+)\.xml$/.test(name))continue;
+    const ds=lo+30+dv.getUint16(lo+26,true)+dv.getUint16(lo+28,true),raw=u.subarray(ds,ds+cs);
+    out[name]=td.decode(m===0?raw:await inflate(raw))}return out}
+function xrows(f){const dp=new DOMParser(),ss=[];
+  if(f["xl/sharedStrings.xml"])[...dp.parseFromString(f["xl/sharedStrings.xml"],"text/xml").getElementsByTagName("si")].forEach(si=>ss.push([...si.getElementsByTagName("t")].map(x=>x.textContent).join("")));
+  const k=Object.keys(f).filter(x=>x.includes("worksheets")).sort((a,b)=>a.length-b.length||a.localeCompare(b))[0];if(!k)throw Error("No worksheet found.");
+  const col=r=>{let n=0;for(const ch of r.replace(/\d/g,""))n=n*26+ch.charCodeAt(0)-64;return n-1};
+  return [...dp.parseFromString(f[k],"text/xml").getElementsByTagName("row")].map(r=>{const a=[];
+    for(const c of r.getElementsByTagName("c")){const t=c.getAttribute("t"),ve=c.getElementsByTagName("v")[0];let v="";
+      if(t==="s")v=ss[+ve.textContent];else if(t==="inlineStr")v=[...c.getElementsByTagName("t")].map(x=>x.textContent).join("");else if(ve)v=ve.textContent;a[col(c.getAttribute("r"))]=v}
+    return Array.from(a,x=>x==null?"":x)})}
+function toQs(rows){const qs=[],er=[];
+  rows.forEach((r,i)=>{r=Array.from({length:6},(_,j)=>String(r[j]==null?"":r[j]).trim());if(r.every(x=>!x))return;if(i===0&&/question/i.test(r[0]))return;
+    const [q,a,b,c,d,k]=r,n=i+1;if(!q||!a||!b||!c||!d){er.push("Row "+n+": the question or one of the 4 options is empty.");return}
+    let x="ABCD".indexOf(k.toUpperCase());if(k.length!==1)x=-1;if(x<0&&/^[1-4]$/.test(k))x=+k-1;
+    if(x<0){er.push("Row "+n+": Correct Answer must be A, B, C or D (found \""+k+"\").");return}
+    qs.push({q,o:[a,b,c,d],a:x})});
+  if(!qs.length&&!er.length)er.push("No questions found in the file.");return{qs,er}}
+$("acheck").onclick=async()=>{
+  pending=null;$("asave").disabled=true;const f=$("afile").files[0];if(!f){$("amsg").innerHTML='<span class="e">Please choose a file first.</span>';return}
+  try{const rows=/\.xlsx$/i.test(f.name)?xrows(await unzip(await f.arrayBuffer())):csv(await f.text());
+    const {qs,er}=toQs(rows);
+    if(er.length){$("amsg").innerHTML='<span class="e"><b>Please fix these errors and check again:</b><br>'+er.slice(0,15).map(esc).join("<br>")+(er.length>15?"<br>...and "+(er.length-15)+" more":"")+"</span>";return}
+    pending=qs;$("asave").disabled=false;$("amsg").innerHTML='<span class="g">File is correct. '+qs.length+' questions found'+(qs.length!==25?" (a full test normally has 25)":"")+'. Press Save Questions to apply.</span>'}
+  catch(e){$("amsg").innerHTML='<span class="e">Could not read the file: '+esc(e.message)+'. Save it again as .xlsx or .csv using the template.</span>'}};
+$("asave").onclick=()=>{if(!pending)return;try{localStorage.setItem("psdc_q_"+$("acourse").value,JSON.stringify(pending));$("amsg").innerHTML='<span class="g">Saved. '+pending.length+' questions are now active for this course.</span>'}catch(e){$("amsg").innerHTML='<span class="e">Could not save in this browser.</span>'}pending=null;$("asave").disabled=true;acount()};
+$("areset").onclick=()=>{try{localStorage.removeItem("psdc_q_"+$("acourse").value)}catch(e){}$("amsg").innerHTML='<span class="g">Default questions restored.</span>';acount()};
+$("atpl").onclick=()=>{const t="Question,Option A,Option B,Option C,Option D,Correct Answer\nWhat does CPU stand for?,Central Process Unit,Central Processing Unit,Computer Personal Unit,Control Program Unit,B\nWhich of these is an input device?,Monitor,Printer,Keyboard,Speaker,C\n";
+  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob(["\uFEFF"+t],{type:"text/csv"}));a.download="PSDC_MCQ_Template.csv";a.click()};
+/* cursor + ripple */
+if(matchMedia("(pointer:fine)").matches){const c=$("cur");let on=false;
+  document.addEventListener("pointermove",e=>{if(!on){on=true;c.style.display="block";document.documentElement.classList.add("nc")}c.style.transform=`translate(${e.clientX}px,${e.clientY}px)`});
+  document.addEventListener("mouseleave",()=>c.style.display="none");document.addEventListener("mouseenter",()=>{if(on)c.style.display="block"})}
+document.addEventListener("pointerdown",e=>{const r=document.createElement("span");r.className="rip";r.style.left=e.clientX+"px";r.style.top=e.clientY+"px";
+  const h=Math.floor(Math.random()*360);r.style.background=`radial-gradient(circle,hsla(${h},90%,60%,.55),hsla(${(h+60)%360},90%,60%,.25))`;document.body.appendChild(r);setTimeout(()=>r.remove(),750)});
+</script>
+</body>
+</html>
